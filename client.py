@@ -1,3 +1,4 @@
+import os
 import socket
 import hashlib
 import threading
@@ -54,7 +55,8 @@ def main(ip, port):
         return
 
     # Send system information (number of cores)
-    send_json(client_socket, {"type": "info", "cores": 4})  # Example: sending 4 cores
+    core_count = os.cpu_count()
+    send_json(client_socket, {"type": "info", "cores": core_count})
 
     try:
         while True:
@@ -72,7 +74,7 @@ def main(ip, port):
 
                 # Divide the work into threads based on available cores
                 threads = []
-                chunk_size = (range_end - range_start) // 4  # Assuming 4 cores
+                chunk_size = (range_end - range_start) // core_count
 
                 for i in range(4):
                     start = range_start + i * chunk_size
